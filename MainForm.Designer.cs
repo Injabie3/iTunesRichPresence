@@ -40,7 +40,7 @@
             // 
             // pollTimer
             // 
-            this.pollTimer.Interval = 15000;
+            this.pollTimer.Interval = 2000;
             this.pollTimer.Tick += new System.EventHandler(this.pollTimer_Tick);
             // 
             // MainForm
@@ -51,7 +51,7 @@
             this.Controls.Add(this.infoLabel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "Rich Presence for iTunes";
+            this.Text = "iTunes Discord RP (modified by Injabie3)";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

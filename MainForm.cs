@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Text;
 using iTunesLib;
 
 namespace iTunesRichPresence {
@@ -26,7 +27,9 @@ namespace iTunesRichPresence {
                 errorCallback = HandleErrorCallback,
                 disconnectedCallback = HandleDisconnectedCallback
             };
-            DiscordRPC.Discord_Initialize("383816327850360843", ref handlers, true, null);
+
+            // Use own Discord app.
+            DiscordRPC.Discord_Initialize("350502362919600130", ref handlers, true, null);
         }
 
         private void HandleReadyCallback() {}
@@ -39,32 +42,38 @@ namespace iTunesRichPresence {
         }
         
         private void UpdatePresence() {
-            var presence = new DiscordRPC.RichPresence {details = $"{_currentArtist} - {_currentTitle}"};
-            if (_currentTitle == "DVNO") {
-                presence.largeImageKey = "dvno";
-                presence.smallImageKey = "itunes_logo";
-                presence.largeImageText = "Four capital letters, printed in gold";
-            }
-            else {
-                presence.largeImageKey = "itunes_logo_big";
-            }
-
-            if (_iTunes.CurrentPlaylist.Kind == ITPlaylistKind.ITPlaylistKindUser) {
-                presence.state = _iTunes.CurrentPlaylist.Name == "Music"
-                    ? $"Album: {_iTunes.CurrentTrack.Album}"
-                    : $"Playlist: {_iTunes.CurrentPlaylist.Name}";
-            }
-            else {
-                presence.state = $"Album: {_iTunes.CurrentTrack.Album}";
-            }
-
-            if (_currentState != ITPlayerState.ITPlayerStatePlaying) {
-                presence.state = "Paused";
-            }
-
-            presence.startTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() - _iTunes.PlayerPosition;
-            presence.endTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() + (_iTunes.CurrentTrack.Duration - _iTunes.PlayerPosition);
+            var presence = new DiscordRPC.RichPresence {details = $"Title: {_currentTitle}" };
             
+            // Discord Rich Presence asset keys, configure on developer dashboard.
+            presence.largeImageKey = "rem";
+            presence.smallImageKey = "itunes";
+            presence.largeImageText = "Rem is best girl :3";
+            presence.smallImageText = "iTunes";
+
+            // For debugging purposes.
+            Console.WriteLine($"{_currentArtist} - {_currentTitle}");
+
+            //if (_iTunes.CurrentPlaylist.Kind == ITPlaylistKind.ITPlaylistKindUser) {
+            //    presence.state = _iTunes.CurrentPlaylist.Name == "Music"
+            //        ? $"Album: {_iTunes.CurrentTrack.Album}"
+            //        : $"Playlist: {_iTunes.CurrentPlaylist.Name}";
+            //}
+            //else {
+            //    presence.state = $"Album: {_iTunes.CurrentTrack.Album}";
+            //}
+
+            // Override the above
+            presence.state = $"Artist: {_currentArtist}";
+
+            if (_currentState != ITPlayerState.ITPlayerStatePlaying)
+            {
+                presence.state = "Paused.";
+            }
+            else {
+                presence.startTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() - _iTunes.PlayerPosition;
+                presence.endTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds() + (_iTunes.CurrentTrack.Duration - _iTunes.PlayerPosition);
+            }
+
             DiscordRPC.Discord_UpdatePresence(ref presence);
         }
 
